@@ -34,7 +34,7 @@ def bertrand_example(play_type, incentive, marginal_revenue_type='nonlinear',
 
     # Initialization of the desired returns.
     if incentive:
-        x_desired = np.array([[14., 8.]])
+        x_desired = np.array([[5., 7.]])
     else:
         x_desired = None
 
@@ -46,6 +46,7 @@ def bertrand_example(play_type, incentive, marginal_revenue_type='nonlinear',
         theta_true = np.array([[-1.2, .3], [-.5, -1.], [7.5, 1.5]])
     elif planner_type == 'gp':
         theta_true = np.array([[-1.2, .3], [-.5, -1.]])
+
 
     # This parameter we assume is known.
     theta_known = np.array([[1., 1.]])
@@ -84,10 +85,10 @@ def bertrand_example(play_type, incentive, marginal_revenue_type='nonlinear',
     # Firm knowledge parameters.
     if planner_type is None:
         mu = 5
-        sigma = .5        
+        sigma = .1    
     elif planner_type == 'gp':
         mu = 5
-        sigma = .5
+        sigma = .25
 
     # Initializing the marginal revenue function.
     if marginal_revenue_type == 'linear':
@@ -117,19 +118,18 @@ def bertrand_example(play_type, incentive, marginal_revenue_type='nonlinear',
                                       max_iter=max_iter)
 
     if incentive:
-        if planner_type is None:
-            true_agent_returns, estimated_agent_returns, excitations, losses, estimation_parameters, incentive_parameters, learn_values, incentive_values = results
-        else:
-            true_agent_returns, estimated_agent_returns, excitations, losses, estimation_parameters, incentive_parameters = results
+        true_agent_returns, estimated_agent_returns, excitations, losses, estimation_parameters, incentive_parameters, learn_values, incentive_values = results
     else:
         true_agent_returns, estimated_agent_returns, excitations, losses, estimation_parameters = results
 
-    if planner_type is None:
-        utils.plot_returns(true_agent_returns, estimated_agent_returns, x_desired,
-                           fig_path=fig_path, show_fig=show_fig, save_fig=save_fig) 
-    elif planner_type == 'gp':
-        utils.plot_returns(true_agent_returns[:100], estimated_agent_returns[:100], x_desired,
-                           fig_path=fig_path, show_fig=show_fig, save_fig=save_fig) 
+    if planner_type == 'gp':
+        true_agent_returns = true_agent_returns[:100]
+        estimated_agent_returns = estimated_agent_returns[:100]
+        excitations = excitations[:100]
+        losses = losses[:100]
+
+    utils.plot_returns(true_agent_returns, estimated_agent_returns, x_desired,
+                       fig_path=fig_path, show_fig=show_fig, save_fig=save_fig) 
 
     utils.plot_persistence_excitation(excitations, fig_path=fig_path, 
                                       show_fig=show_fig, save_fig=save_fig)
@@ -143,6 +143,8 @@ def bertrand_example(play_type, incentive, marginal_revenue_type='nonlinear',
     utils.plot_player_parameters(estimation_parameters, player_number=1, 
                                  fig_path=fig_path, show_fig=show_fig, save_fig=save_fig)
     if incentive:
+        utils.plot_cost(learn_values, incentive_values, fig_path=fig_path, 
+                        show_fig=show_fig, save_fig=save_fig)
         utils.plot_incentive_parameters(incentive_parameters, fig_path=fig_path, 
                                         show_fig=show_fig, save_fig=save_fig)
         utils.plot_incentive_parameters_together(incentive_parameters, fig_path=fig_path, 
@@ -151,10 +153,6 @@ def bertrand_example(play_type, incentive, marginal_revenue_type='nonlinear',
                                      fig_path=fig_path, show_fig=show_fig, save_fig=save_fig)
         utils.plot_player_incentives(incentive_parameters, player_number=1, 
                                      fig_path=fig_path, show_fig=show_fig, save_fig=save_fig)
-
-    if planner_type is None and incentive:
-        utils.plot_cost(learn_values, incentive_values, fig_path=fig_path, 
-                        show_fig=show_fig, save_fig=save_fig)
 
     if planner_type is None:
         if incentive:
@@ -424,6 +422,7 @@ def true_gp_examples():
         os.makedirs(fig_path)
 
     incentive = True
+    gp_step = .5
 
     gp_results = bertrand_example(play_type=play_type, incentive=incentive, 
                                   marginal_revenue_type=marginal_revenue_type, 

@@ -66,7 +66,7 @@ def plot_returns(true_returns, estimated_returns, x_desired=None,
 
     ax.set_title('Agent Response', fontsize=fs2)
     ax.set_xlabel('iteration', fontsize=fs2)
-    ax.set_ylabel(r'$x_i^{k+1}$', fontsize=fs3, rotation=0, labelpad=40)
+    ax.set_ylabel(r'$x_i$', fontsize=fs3, rotation=0, labelpad=30)
 
     if x_desired is not None:
         lgd = ax.legend([(hline1, hline1), (line1, line1), (dotted_line1, dotted_line2), 
@@ -100,7 +100,7 @@ def plot_estimation_error(estimation_errors, labels=[''], colors=None,
     """Plotting distance between the true and estimated response for players over iterations.
 
     :param estimation_errors: List of numpy arrays each containing the estimation
-    error for an agent behavior at each iteration given by \|x_i^k - \hat{x}_i^k\|.
+    error for an agent behavior at each iteration given by \|x_i - \hat{x}_i\|.
     :param labels: List of labels corresponding to items in estimation_errors for plot.
     :param colors: List of colors corresponding to items in estimation_errors for plot.
     :params fig_path, show_fig, savefig: path to save fig, whether to show, whether to save.
@@ -128,7 +128,7 @@ def plot_estimation_error(estimation_errors, labels=[''], colors=None,
 
     ax.set_title('Estimation Error', fontsize=fs2)
     ax.set_xlabel('iteration', fontsize=fs2)
-    ax.set_ylabel(r'$\|x^k - \hat{x}^k\|_2$', fontsize=fs3, rotation=0, labelpad=60)
+    ax.set_ylabel(r'$\|x - \hat{x}\|_2$', fontsize=fs3, rotation='vertical')
 
     if len(labels) == 1 and '' in labels:
         # No legend if only plotting for one play style.
@@ -162,7 +162,7 @@ def plot_parameter_error(parameter_error, fig_path=os.getcwd(), show_fig=False,
     """Plotting distance between the true and estimated parameters for players over iterations.
 
     :param parameter_error: (num iterations x num players) numpy array containing 
-    the parameter error for players at each iteration given by \|\theta_i^k - \hat{\theta}_i^k\|.
+    the parameter error for players at each iteration given by \|\theta_i - \hat{\theta}_i\|.
     :param labels: List of labels corresponding to items in estimation_errors for plot.
     :param colors: List of colors corresponding to items in estimation_errors for plot.
     :params fig_path, show_fig, savefig: path to save fig, whether to show, whether to save.
@@ -185,14 +185,14 @@ def plot_parameter_error(parameter_error, fig_path=os.getcwd(), show_fig=False,
     fs2 = 24
     fs3 = 26
 
-    ax.plot(parameter_error_1, label=r'$\|\theta_1^k - \hat{\theta}_1^k\|_2$', 
+    ax.plot(parameter_error_1, label=r'$\|\theta_1 - \hat{\theta}_1\|_2$', 
             color=xkcd['tomato red'], linestyle='-', lw=lw)
-    ax.plot(parameter_error_2, label=r'$\|\theta_2^k - \hat{\theta}_2^k\|_2$', 
+    ax.plot(parameter_error_2, label=r'$\|\theta_2 - \hat{\theta}_2\|_2$', 
             color=xkcd['muted blue'], linestyle='--', lw=lw)
 
     ax.set_title('Parameter Error', fontsize=fs2)
     ax.set_xlabel('iteration', fontsize=fs2)
-    ax.set_ylabel(r'$\|\theta_i^k - \hat{\theta}_i^k\|_2$', fontsize=fs3, rotation=0, labelpad=60)
+    ax.set_ylabel(r'$\|\theta_i - \hat{\theta}_i\|_2$', fontsize=fs3, rotation='vertical')
 
     lgd = ax.legend(loc='best', fancybox=True, fontsize=fs1)
     
@@ -217,7 +217,7 @@ def plot_incentive_error(incentive_errors, labels=[''], colors=None,
     """Plotting distance to the desired response for players over iterations.
 
     :param incentive_errors: List of numpy arrays like each containing the incentive
-    error for an agent behavior at each iteration given by \|x_i^k - x_i^d\|.
+    error for an agent behavior at each iteration given by \|x_i - x_i^d\|.
     :param labels: List of labels corresponding to items in incentive_errors for plot.
     :param colors: List of colors corresponding to items in incentive_errors for plot.
     :params fig_path, show_fig, savefig: path to save fig, whether to show, whether to save.
@@ -245,7 +245,7 @@ def plot_incentive_error(incentive_errors, labels=[''], colors=None,
 
     ax.set_title('Incentive Error', fontsize=fs2)
     ax.set_xlabel('iteration', fontsize=fs2)
-    ax.set_ylabel(r'$\|x^k - x^d\|_2$', fontsize=fs3, rotation=0, labelpad=60)
+    ax.set_ylabel(r'$\|x - x^d\|_2$', fontsize=fs3, rotation='vertical')
 
     if len(labels) == 1 and '' in labels:
         # No legend if only plotting for one play style.
@@ -306,7 +306,7 @@ def plot_persistence_excitation(excitations, fig_path=os.getcwd(),
 
     ax.set_title('Persistence of Excitation', fontsize=fs2)
     ax.set_xlabel('iteration', fontsize=fs2)
-    ax.set_ylabel(r'$\|\xi_i^k\|_2^2$', fontsize=fs3, rotation=0, labelpad=40)
+    ax.set_ylabel(r'$\|\xi_i\|_2^2$', fontsize=fs3, rotation=0, labelpad=30)
 
     lgd = ax.legend(loc='best', fancybox=True, fontsize=fs1)
     
@@ -356,7 +356,7 @@ def plot_losses(losses, fig_path=os.getcwd(), show_fig=False, save_fig=False):
 
     ax.set_title('Loss', fontsize=fs2)
     ax.set_xlabel('iteration', fontsize=fs2)
-    ax.set_ylabel(r'$\ell(\theta_i)$', fontsize=fs3, rotation=0, labelpad=40)
+    ax.set_ylabel(r'$\ell(\theta_i)$', fontsize=fs3, rotation=0, labelpad=30)
 
     lgd = ax.legend(loc='best', fancybox=True, fontsize=fs1)
     
@@ -410,7 +410,7 @@ def plot_player_parameters(estimation_parameters, player_number, fig_path=os.get
                 
     ax.set_title('Agent %d Estimation Parameters' % (player_number+1), fontsize=fs2)
     ax.set_xlabel('iteration', fontsize=fs2)
-    ax.set_ylabel(r'$\hat{\theta}_{%d,j}$' % (player_number+1), fontsize=fs3, rotation=0, labelpad=40)
+    ax.set_ylabel(r'$\hat{\theta}_{%d,j}$' % (player_number+1), fontsize=fs3, rotation=0, labelpad=30)
     
     if estimation.shape[1] > 3:
         lgd = ax.legend(bbox_to_anchor=(1, 1), loc='upper left', fancybox=True, ncol=1, fontsize=fs1)
@@ -466,7 +466,7 @@ def plot_estimation_parameters(estimation_parameters, fig_path=os.getcwd(),
                 
         ax1.set_title('Agent 1 Estimated Parameters', fontsize=fs2)
         ax1.set_xlabel('iteration', fontsize=fs2)
-        ax1.set_ylabel(r'$\hat{\theta}_{1,j}$', fontsize=fs3)
+        ax1.set_ylabel(r'$\hat{\theta}_{1,j}$', fontsize=fs3, labelpad=30)
         
         if estimation_1.shape[1] > 2:
             lgd = ax1.legend(bbox_to_anchor=(.5, -.1), loc='upper center', fancybox=True, ncol=2, fontsize=fs1)
@@ -482,7 +482,7 @@ def plot_estimation_parameters(estimation_parameters, fig_path=os.getcwd(),
         
         ax2.set_title('Agent 2 Estimated Parameters', fontsize=fs2)
         ax2.set_xlabel('iteration', fontsize=fs2)
-        ax2.set_ylabel(r'$\hat{\theta}_{2,j}$', fontsize=fs3, rotation=0, labelpad=40)
+        ax2.set_ylabel(r'$\hat{\theta}_{2,j}$', fontsize=fs3, rotation=0, labelpad=30)
         
 
         if estimation_2.shape[1] > 2:
@@ -542,9 +542,9 @@ def plot_estimation_parameters_together(estimation_parameters, fig_path=os.getcw
         
     ax.set_title('Estimated Agent Parameters', fontsize=fs2)
     ax.set_xlabel('iteration', fontsize=fs2)
-    ax.set_ylabel(r'$\hat{\theta}_{i,j}$', fontsize=fs3, rotation=0, labelpad=40)
+    ax.set_ylabel(r'$\hat{\theta}_{i,j}$', fontsize=fs3, rotation=0, labelpad=30)
     
-    if estimation_1.shape[1] > 2:
+    if estimation_1.shape[1] > 3:
         lgd = ax.legend(bbox_to_anchor=(1, 1), loc='upper left', fancybox=True, ncol=2, fontsize=fs1)
     else:
         lgd = ax.legend(loc='best', fancybox=True, ncol=2, fontsize=fs1)
@@ -601,7 +601,7 @@ def plot_player_incentives(incentive_parameters, player_number, fig_path=os.getc
                 
     ax.set_title('Agent %d Incentive Parameters' % (player_number+1), fontsize=fs2)
     ax.set_xlabel('iteration', fontsize=fs2)
-    ax.set_ylabel(r'$\alpha_{%d,j}$' % (player_number+1), fontsize=fs3, rotation=0, labelpad=40)
+    ax.set_ylabel(r'$\alpha_{%d,j}$' % (player_number+1), fontsize=fs3, rotation=0, labelpad=30)
     
     if incentive.shape[1] > 3:
         lgd = ax.legend(bbox_to_anchor=(1, 1), loc='upper left', fancybox=True, ncol=1, fontsize=fs1)
@@ -660,7 +660,7 @@ def plot_incentive_parameters(incentive_parameters, fig_path=os.getcwd(),
                 
         ax1.set_title('Agent 1 Incentive Parameters', fontsize=fs2)
         ax1.set_xlabel('iteration', fontsize=fs2)
-        ax1.set_ylabel(r'$\alpha_{1,j}$', fontsize=fs3, rotation=0, labelpad=40)
+        ax1.set_ylabel(r'$\alpha_{1,j}$', fontsize=fs3, rotation=0, labelpad=30)
 
         if incentive_1.shape[1] > 2:
             lgd = ax1.legend(bbox_to_anchor=(.5, -.1), loc='upper center', 
@@ -677,7 +677,7 @@ def plot_incentive_parameters(incentive_parameters, fig_path=os.getcwd(),
                 
         ax2.set_title('Agent 2 Incentive Parameters', fontsize=fs2)
         ax2.set_xlabel('iteration', fontsize=fs2)
-        ax2.set_ylabel(r'$\alpha_{2,j}$', fontsize=fs3, rotation=0, labelpad=40)
+        ax2.set_ylabel(r'$\alpha_{2,j}$', fontsize=fs3, rotation=0, labelpad=30)
         
         if incentive_2.shape[1] > 2:
             lgd = ax2.legend(bbox_to_anchor=(.5, -.1), loc='upper center', 
@@ -737,9 +737,9 @@ def plot_incentive_parameters_together(incentive_parameters, fig_path=os.getcwd(
         
     ax.set_title('Agent Incentive Parameters', fontsize=fs2)
     ax.set_xlabel('iteration', fontsize=fs2)
-    ax.set_ylabel(r'$\hat{\theta}_{i,j}$', fontsize=fs3, rotation=0, labelpad=40)
+    ax.set_ylabel(r'$\alpha_{i,j}$', fontsize=fs3, rotation=0, labelpad=30)
     
-    if incentive_1.shape[1] > 2:
+    if incentive_1.shape[1] > 3:
         lgd = ax.legend(bbox_to_anchor=(1, 1), loc='upper left', fancybox=True, ncol=2, fontsize=fs1)
     else:
         lgd = ax.legend(loc='best', fancybox=True, ncol=2, fontsize=fs1)
@@ -792,25 +792,46 @@ def plot_cost(learn_values, incentive_values,
     fs2 = 24
     fs3 = 26
 
-    ax.plot(learn1, color=xkcd['tomato red'], linestyle='-', lw=lw, 
-            label=r'$\langle \Phi_1(x), \hat{\theta}_1 \rangle$')
-    ax.plot(incentive1, color=xkcd['tomato red'], linestyle='--', lw=lw, 
-            label=r'$\langle \Psi_1(x), \alpha_1 \rangle$')
-    ax.plot(learn1 + incentive1, color=xkcd['purple'], linestyle='-', lw=lw, 
-            label=r'$\langle \Phi_1(x), \hat{\theta}_1 \rangle + \langle \Psi_1(x), \alpha_1 \rangle$')
+    ax.plot(learn1, color=xkcd['reddish orange'], linestyle='-', lw=lw)
+    line1 = lines.Line2D([], [], lw=lw, linestyle="-", color=xkcd['reddish orange'])
 
-    ax.plot(learn2, color=xkcd['muted blue'], linestyle='-', lw=lw, 
-            label=r'$\langle \Phi_2(x), \hat{\theta}_2 \rangle$')
-    ax.plot(incentive2, color=xkcd['muted blue'], linestyle='--', lw=lw, 
-            label=r'$\langle \Psi_2(x), \alpha_2 \rangle$')
-    ax.plot(learn2 + incentive2, color=xkcd['yellow orange'], linestyle='-', lw=lw, 
-            label=r'$\langle \Phi_2(x), \hat{\theta}_2 \rangle + \langle \Psi_2(x), \alpha_2 \rangle$')
+    ax.plot(incentive1, color=xkcd['reddish orange'], linestyle='-', lw=lw)
+    ax.plot(incentive1, color=xkcd['steel grey'], linestyle=':', lw=lw)
+    dotted_line1 = lines.Line2D([], [], lw=lw, linestyle=":", dashes=(10, 1), color=xkcd['reddish orange'])
+    dotted_line2 = lines.Line2D([], [], lw=lw, linestyle="-", dashes=(5, 4), color=xkcd['steel grey'])
+
+    ax.plot(learn1 + incentive1, color=xkcd['tomato red'], linestyle='-', lw=lw)
+    ax.plot(learn1 + incentive1, color=xkcd['black'], linestyle='--', lw=lw)
+    dotted_line3 = lines.Line2D([], [], lw=lw, linestyle="--", dashes=(10, 1), color=xkcd['tomato red'])
+    dotted_line4 = lines.Line2D([], [], lw=lw, linestyle="-", dashes=(5, 4), color=xkcd['black'])
+
+    ax.plot(learn2, color=xkcd['cobalt'], linestyle='-', lw=lw)
+    line2 = lines.Line2D([], [], lw=lw, linestyle="-", color=xkcd['cobalt'])
+
+    ax.plot(incentive2, color=xkcd['cobalt'], linestyle='-', lw=lw)
+    ax.plot(incentive2, color=xkcd['steel grey'], linestyle=':', lw=lw)
+    dotted_line5 = lines.Line2D([], [], lw=lw, linestyle=":", dashes=(10, 1), color=xkcd['cobalt'])
+    dotted_line6 = lines.Line2D([], [], lw=lw, linestyle="-", dashes=(5, 4), color=xkcd['steel grey'])
+
+    ax.plot(learn2 + incentive2, color=xkcd['muted blue'], linestyle='-', lw=lw)
+    ax.plot(learn2 + incentive2, color=xkcd['black'], linestyle='--', lw=lw)
+    dotted_line7 = lines.Line2D([], [], lw=lw, linestyle="--", dashes=(10, 1), color=xkcd['muted blue'])
+    dotted_line8 = lines.Line2D([], [], lw=lw, linestyle="-", dashes=(5, 4), color=xkcd['black'])
 
     ax.set_title('', fontsize=fs2)
     ax.set_xlabel('iteration', fontsize=fs2)
-    ax.set_ylabel(r'', fontsize=fs3, rotation=0, labelpad=40)
+    ax.set_ylabel(r'Utility Component', fontsize=fs3, rotation='vertical')
 
-    lgd = ax.legend(bbox_to_anchor=(1, 1), loc='upper left', fancybox=True, ncol=1, fontsize=fs1)
+    lgd = ax.legend([(line1, line1), (dotted_line1, dotted_line2), (dotted_line3, dotted_line4), 
+                     (line2, line2), (dotted_line5, dotted_line6), (dotted_line7, dotted_line8)], 
+                    [r'$\langle \Phi_1(x), \hat{\theta}_1 \rangle + \nu$', 
+                     r'$\langle \Psi_1(x), \alpha_1 \rangle$', 
+                     r'$\langle \Phi_1(x), \hat{\theta}_1 \rangle + \nu + \langle \Psi_1(x), \alpha_1 \rangle$', 
+                     r'$\langle \Phi_2(x), \hat{\theta}_2 \rangle + \nu$', 
+                     r'$\langle \Psi_2(x), \alpha_2 \rangle$', 
+                     r'$\langle \Phi_2(x), \hat{\theta}_2 \rangle + \nu + \langle \Psi_2(x), \alpha_2 \rangle$'],
+                    bbox_to_anchor=(1, 1), loc='upper left', fancybox=True, ncol=1, fontsize=fs1)
+
     ax.tick_params(labelsize=fs2)
     ax.set_xlim([-20, len(learn_values)+20])
     fig.canvas.draw()

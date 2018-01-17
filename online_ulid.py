@@ -67,7 +67,7 @@ def online_ulid(x_true, x_desired, x_bar, theta_true, theta_known,
     incentive_parameters = [alpha]
     excitations = []
     losses = []
-    if planner_type is None and incentive:
+    if incentive:
         learn_vals = []
         incentive_vals = []
     done = False
@@ -86,7 +86,7 @@ def online_ulid(x_true, x_desired, x_bar, theta_true, theta_known,
                                            incentive, play_type, planner_type, 
                                            gp_step, k)
 
-        if planner_type is None and incentive:
+        if incentive:
             params = update_estimated_return(est_basis_functions, inc_basis_functions,
                                              x_true, x_desired, alpha, theta_hat, 
                                              theta_known, nu, num_players, incentive, 
@@ -113,9 +113,8 @@ def online_ulid(x_true, x_desired, x_bar, theta_true, theta_known,
 
         # Check for parameter convergence in gradient play case.
         if planner_type == 'gp':
-            param_err = np.linalg.norm(theta_true - theta_hat_update)
-
-            if param_err < .01:
+            param_err = np.linalg.norm(theta_true - theta_hat_update, axis=1)
+            if param_err.max() < .01:
                 done = True
     
         if incentive:
@@ -130,7 +129,7 @@ def online_ulid(x_true, x_desired, x_bar, theta_true, theta_known,
         losses.append(loss)
         estimation_parameters.append(theta_hat_update)
         excitations.append([np.linalg.norm(xi_k[:, i, None]**2) for i in xrange(xi_k.shape[1])])
-        if planner_type is None and incentive:
+        if incentive:
             learn_vals.append(learn_val)
             incentive_vals.append(incentive_val)
 
@@ -142,18 +141,14 @@ def online_ulid(x_true, x_desired, x_bar, theta_true, theta_known,
     estimated_agent_returns = np.vstack(estimated_agent_returns)
     losses = np.vstack(losses)
     excitations = np.vstack(excitations)
-    if planner_type is None and incentive:
+    if incentive:
         learn_vals = np.array(learn_vals)
         incentive_vals = np.array(incentive_vals)
 
     if incentive:
-        if planner_type is None:
-            results = (true_agent_returns, estimated_agent_returns, excitations, 
-                       losses, estimation_parameters, incentive_parameters, 
-                       learn_vals, incentive_vals)
-        else:
-            results = (true_agent_returns, estimated_agent_returns, excitations, 
-                       losses, estimation_parameters, incentive_parameters)
+        results = (true_agent_returns, estimated_agent_returns, excitations, 
+                   losses, estimation_parameters, incentive_parameters, 
+                   learn_vals, incentive_vals)
     else:
         results = (true_agent_returns, estimated_agent_returns, excitations, 
                    losses, estimation_parameters)
@@ -459,41 +454,35 @@ def update_estimated_return(est_basis_functions, inc_basis_functions, x_true,
     
     x_hat_update = np.zeros((1, num_players))
 
-    if planner_type is None and incentive:
+    if incentive:
         learn_val = []
         incentive_val = []
 
     for i in xrange(num_players):
-        if planner_type is None:
-            if incentive:
-                learn_val.append(np.asscalar(np.dot(phi(est_basis_functions, x_true, i).T, 
-                                             theta_hat[:, i, None])))
-                incentive_val.append(np.asscalar(np.dot(psi(inc_basis_functions, x_true, x_desired, i).T, 
-                                                 alpha[:, i, None])))
+        if incentive:
+            marg_rev_term = np.dot(phi(est_basis_functions, x_true, i).T, 
+                                   theta_hat[:, i, None]) \
+                            + nu[0, i]*theta_known[0, i]
+            inc_term = np.dot(psi(inc_basis_functions, x_true, x_desired, i).T, 
+                              alpha[:, i, None])
 
-                x_hat_update[0, i] = np.dot(phi(est_basis_functions, x_true, i).T, 
-                                            theta_hat[:, i, None]) \
-                                     + nu[0, i]*theta_known[0, i] \
-                                     + np.dot(psi(inc_basis_functions, x_true, x_desired, i).T, 
-                                              alpha[:, i, None])
-            else:
+            learn_val.append(np.asscalar(marg_rev_term))
+            incentive_val.append(np.asscalar(inc_term))
+
+            if planner_type is None:
+                x_hat_update[0, i] = marg_rev_term + inc_term
+            elif planner_type == 'gp':
+                x_hat_update[0, i] = x_true[0, i] + gp_step*(marg_rev_term + inc_term)
+        else:
+            if planner_type is None:
                 x_hat_update[0, i] = np.dot(phi(est_basis_functions, x_true, i).T, 
                                             theta_hat[:, i, None]) \
                                      + nu[0, i]*theta_known[0, i] 
-        elif planner_type == 'gp':
-            if incentive:
-                x_hat_update[0, i] = x_true[0, i] + gp_step*(np.dot(phi(est_basis_functions, x_true, i).T, 
-                                                                   theta_hat[:, i, None]) 
-                                                             + theta_known[0, i]*nu[0, i]
-                                                             + np.dot(psi(inc_basis_functions, 
-                                                                          x_true, x_desired, i).T, 
-                                                                      alpha[:, i, None]))
-            else:
+            elif planner_type == 'gp':
                 x_hat_update[0, i] = x_true[0, i] + gp_step*(np.dot(phi(est_basis_functions, x_true, i).T, 
                                                                    theta_hat[:, i, None]) 
                                                              + theta_known[0, i]*nu[0, i]) 
-
-    if planner_type is None and incentive:
+    if incentive:
         return x_hat_update, learn_val, incentive_val
     else:
         return x_hat_update
